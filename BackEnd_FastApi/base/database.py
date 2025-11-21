@@ -2,6 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+# BASE OF DATABASE CONFIGURATION
+
+
 # URL de la base de datos (SQLite en este caso)
 SQLALCHEMY_DATABASE_URL = "sqlite:///./tramites.db"
 
