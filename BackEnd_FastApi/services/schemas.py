@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+# Schemas of Service
+
 class ServiceBase(BaseModel):
     name: str
     description: str
