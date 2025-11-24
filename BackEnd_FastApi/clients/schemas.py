@@ -12,10 +12,10 @@ class TypeDocumentEnum(str, Enum):
 
 # Base schema for Client (common fields)
 class ClientBase(BaseModel):
-    name: str
-    last_name: str
     type_document: TypeDocumentEnum
     number_document: str
+    name: str
+    last_name: str
     email: str
     phone: str
 
@@ -23,10 +23,10 @@ class ClientCreate(ClientBase):
     pass
 
 class ClientUpdate(BaseModel):
-    name: str | None = None
-    last_name: str | None = None
     type_document: TypeDocumentEnum | None = None
     number_document: str | None = None
+    name: str | None = None
+    last_name: str | None = None
     email: str | None = None
     phone: str | None = None
 
@@ -37,11 +37,13 @@ class AddressBase(BaseModel):
     state: str
     zip_code: str
 
+# Output schema for Address
 class AddressOut(AddressBase):
     id: int
     class Config:
         from_attributes = True
 
+# Output schema for Client including addresses
 class ClientOut(ClientBase):
     id: int
     datetime_created: datetime
@@ -50,5 +52,6 @@ class ClientOut(ClientBase):
     class Config:
         from_attributes = True
 
+# Delete schema for Id client
 class ClientDelete(BaseModel):
     id: int

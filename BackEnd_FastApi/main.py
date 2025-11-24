@@ -6,10 +6,12 @@ from facture.router import router as facture_router
 
 # Import database and models
 from base.database import Base, engine
-from services import models as service_models
-from clients import models as client_models
-from products import models as product_models
-from facture import models as facture_models
+# Import models so they are registered with Base
+import services.models
+import clients.models
+import products.models
+import facture.models
+
 
 # Main FastAPI application
 app = FastAPI()

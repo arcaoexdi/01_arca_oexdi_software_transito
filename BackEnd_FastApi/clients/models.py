@@ -18,10 +18,10 @@ class Client(Base):
     __tablename__ = "clients"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False, index=True)
-    last_name = Column(String(100), nullable=True)
     type_document = Column(Enum(TypeDocumentEnum), nullable=False, index=True)
     number_document = Column(String(30), unique=True, index=True, nullable=False)
+    name = Column(String(100), nullable=False, index=True)
+    last_name = Column(String(100), nullable=True)
     email = Column(String(100), unique=True, index=True, nullable=False)
     phone = Column(String(20), unique=True, index=True, nullable=False)
     datetime_created = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
