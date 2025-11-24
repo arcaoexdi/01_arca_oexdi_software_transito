@@ -1,16 +1,51 @@
 # 🚀 Backend de Gestión de Trámites
 
-Este proyecto implementa un **backend en FastAPI** para manejar clientes, servicios, productos y facturas.  
+Este proyecto implementa un **backend en FastAPI** para manejar clientes, usuarios, servicios, productos y facturas.  
+
 Incluye integración con **SQLAlchemy**, **Alembic** para migraciones y documentación automática con **Swagger UI**.
 
 ---
 
 ## 📂 Estructura del proyecto
+# Configuración de la base de datos y sesión 
+BackEnd_FastApi/ 
+      │── base/ 
+             └── database.py 
 
-BackEnd_FastApi/ │── base/ │ └── database.py # Configuración de la base de datos y sesión │── clients/ │ ├── models.py # Modelos SQLAlchemy (Client, Address) │ ├── schemas.py # Schemas Pydantic │ ├── crud.py # Operaciones CRUD │ └── router.py # Endpoints FastAPI │── services/ │ └── models.py │── products/ │ └── models.py │── facture/ │ └── models.py │── migrations/ # Migraciones Alembic │── main.py # Punto de entrada FastAPI │── requirements.txt # Dependencias del proyecto └── README.md # Documentación del proyecto
+# Endpoints FastAPI 
+         │── clients/ 
+                  └── models.py 
+         │── users/ 
+                  └── models.py 
+         │── services/ │ 
+                  └── models.py 
+         │── products/ 
+                  └── models.py 
+         │── facture/ 
+                  └── models.py 
 
-Código
+# Modelos SQLAlchemy (Client, Users, Services, Products, Facture)
+         └── schemas.py 
 
+# Schemas Pydantic (Client, Users, Services, Products, Facture) 
+         └── crud.py 
+         
+# Operaciones CRUD (Client, Users, Services, Products, Facture)
+         └── router.py 
+         
+# Migrations(Client, Users, Services, Products, Facture)
+         └── migrations/ 
+
+# Migraciones Alembic 
+         └── main.py 
+
+# Punto de entrada FastAPI
+         └── requirements.txt 
+
+# Dependencias del proyecto 
+         └── README.md 
+         
+# Documentación del proyecto
 ---
 
 ## ⚙️ Tecnologías usadas
@@ -27,65 +62,62 @@ Código
 ## ▶️ Cómo correr el servidor
 
 1. Activa tu entorno virtual:
-   ```bash
-   source venv/bin/activate   # Linux/Mac
-   venv\Scripts\activate      # Windows
-Instala dependencias:
+   
+- **source venv/bin/activate**   # Linux/Mac
+- **venv\Scripts\activate**      # Windows
 
-bash
-pip install -r requirements.txt
-Ejecuta el servidor:
+2. Instala dependencias:
 
-bash
-uvicorn main:app --reload
-Accede a la documentación interactiva:
+- **pip install -r requirements.txt**
 
-Swagger UI → http://127.0.0.1:8000/docs
+3. Ejecuta el servidor:
 
-OpenAPI JSON → http://127.0.0.1:8000/openapi.json
+- **uvicorn main:app --reload**
 
-🗄️ Migraciones con Alembic
-Cada vez que modifiques tus modelos (models.py):
+4. Accede a la documentación interactiva:
 
-Genera una nueva migración:
+- **Swagger UI → http://127.0.0.1:8000/docs**
+- **OpenAPI JSON → http://127.0.0.1:8000/openapi.json**
 
-bash
-alembic revision --autogenerate -m "descripcion del cambio"
-Aplica la migración:
+5. 🗄️ Migraciones con Alembic
 
-bash
-alembic upgrade head
-Revertir la última migración:
+- Cada vez que se modifiquen los modelos (models.py):
 
-bash
-alembic downgrade -1
-Ver historial:
+6. Genera una nueva migración:
 
-bash
-alembic history
-📦 Actualizar dependencias (requirements.txt)
-Instala nuevas librerías con pip install nombre_libreria.
+- **alembic revision --autogenerate -m "descripcion del cambio"**
 
-Actualiza el archivo requirements.txt:
+7. Aplica la migración:
 
-bash
-pip freeze > requirements.txt
-Para replicar el entorno en otra máquina:
+- **alembic upgrade head**
 
-bash
-pip install -r requirements.txt
-✅ Buenas prácticas
-Mantener los routers separados por dominio (clients, services, etc.).
+8. Revertir la última migración:
 
-Usar schemas Pydantic para validación de datos.
+- **alembic downgrade -1**
 
-Centralizar la configuración de la base en database.py.
+9. Ver historial:
+- **alembic history**
 
-Documentar cada modelo y endpoint.
+10. 📦 Actualizar dependencias (requirements.txt)
 
-En desarrollo puedes borrar tramites.db y recrear tablas.
+- **Instala nuevas librerías con pip install nombre_libreria.**
 
-En producción siempre usar Alembic para migraciones.
+11. Actualiza el archivo requirements.txt:
+
+- **pip freeze > requirements.txt**
+
+12. Para replicar el entorno en otra máquina:
+
+- **pip install -r requirements.txt**
+
+## ✅ Buenas prácticas
+-- **Mantener los routers separados por dominio (clients, services, etc.).**
+-- **Usar schemas Pydantic para validación de datos.**
+-- **Centralizar la configuración de la base en database.py.**
+-- **Documentar cada modelo y endpoint.**
+-- **En desarrollo puedes borrar tramites.db y recrear tablas.**
+
+## En producción siempre usar Alembic para migraciones.
 
 📌 Arquitectura del sistema
 text
