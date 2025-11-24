@@ -111,11 +111,11 @@ BackEnd_FastApi/
 - **pip install -r requirements.txt**
 
 ## ✅ Buenas prácticas
--- **Mantener los routers separados por dominio (clients, services, etc.).**
--- **Usar schemas Pydantic para validación de datos.**
--- **Centralizar la configuración de la base en database.py.**
--- **Documentar cada modelo y endpoint.**
--- **En desarrollo puedes borrar tramites.db y recrear tablas.**
+- **Mantener los routers separados por dominio (clients, services, etc.).**
+- **Usar schemas Pydantic para validación de datos.**
+- **Centralizar la configuración de la base en database.py.**
+- **Documentar cada modelo y endpoint.**
+- **En desarrollo puedes borrar tramites.db y recrear tablas.**
 
 ## En producción siempre usar Alembic para migraciones.
 
