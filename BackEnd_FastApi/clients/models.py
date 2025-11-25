@@ -4,6 +4,10 @@ from base.database import Base
 import datetime
 import enum
 
+# -------------------------------
+# MODELS FOR CLIENTS
+# -------------------------------
+
 # Enum for type of documents
 class TypeDocumentEnum(enum.Enum):
     CC = "CC"
@@ -11,7 +15,6 @@ class TypeDocumentEnum(enum.Enum):
     TI = "TI"
     PA = "PA"
     NIT = "NIT"
-
 
 # Client model
 class Client(Base):
@@ -31,16 +34,6 @@ class Client(Base):
         back_populates="client",
         cascade="all, delete-orphan"
     )
-
-    def get_type_document_code(self) -> str:
-        reverse_map = {
-            "cedula de ciudadania": "CC",
-            "cedula de extranjeria": "CE",
-            "tarjeta de identidad": "TI",
-            "pasaporte": "PA",
-            "nit": "NIT"
-        }
-        return reverse_map.get(self.type_document.value, "UNKNOWN")
 
 # Address model
 class Address(Base):

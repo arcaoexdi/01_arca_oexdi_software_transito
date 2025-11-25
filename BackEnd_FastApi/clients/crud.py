@@ -1,35 +1,23 @@
 from sqlalchemy.orm import Session
-from clients.models import Client
+from clients.models import Client, Address
 from clients.schemas import ClientCreate, ClientUpdate
 from typing import Optional
-from clients.models import TypeDocumentEnum as ModelEnum
-from clients.schemas import TypeDocumentEnum as SchemaEnum
 
-# Mapping function between schema enum and model enum
-def map_type_document(schema_value: SchemaEnum) -> ModelEnum:
-    mapping = {
-        SchemaEnum.CC: ModelEnum.CC,
-        SchemaEnum.CE: ModelEnum.CE,
-        SchemaEnum.TI: ModelEnum.TI,
-        SchemaEnum.PA: ModelEnum.PA,
-        SchemaEnum.NIT: ModelEnum.NIT,
-    }
-    return mapping[schema_value]
+# -------------------------------
+# CRUD OPERATIONS FOR CLIENTS
+# -------------------------------
 
 # Create a new client
-def create_client(db: Session, client_data: ClientCreate) -> Optional[Client]:
+def create_client(db: Session, client_data: ClientCreate) -> Client:
     existing = db.query(Client).filter(
         (Client.number_document == client_data.number_document) |
         (Client.email == client_data.email) |
         (Client.phone == client_data.phone)
     ).first()
     if existing:
-        return None
+        raise ValueError("Client already exists")
     
-    data_dict = client_data.dict()
-    data_dict['type_document'] = map_type_document(client_data.type_document)
-
-    new_client = Client(**data_dict)
+    new_client = Client(**client_data.dict())
     db.add(new_client)
     db.commit()
     db.refresh(new_client)
@@ -45,7 +33,14 @@ def update_client(db: Session, client_id: int, updated_data: ClientUpdate) -> Op
     if not client:
         return None
 
-    update_dict = updated_data.dict(exclude_unset=True, exclude={"id", "datetime_created"})
+    update_dict = updated_data.dict(exclude_unset=True)
+    
+    # Validation duplicates if unique fields are updated
+    if "addresses" in update_dict:
+        client.addresses = [Address(**addr) for addr in update_dict["addresses"]]
+        update_dict.pop("addresses")
+
+    # Update the rest of the fields
     for field, value in update_dict.items():
         setattr(client, field, value)
 
