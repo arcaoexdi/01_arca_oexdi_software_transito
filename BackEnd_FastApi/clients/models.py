@@ -1,3 +1,5 @@
+# Librerias importadas para la definicion de los modelos de los clientes en la base de datos.
+
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
 from base.database import Base
@@ -5,10 +7,10 @@ import datetime
 import enum
 
 # -------------------------------
-# MODELS FOR CLIENTS
+# MODELOS PARA CLIENTES
 # -------------------------------
 
-# Enum for type of documents
+# Enumeracion para tipos de documento
 class TypeDocumentEnum(enum.Enum):
     CC = "CC"
     CE = "CE"
@@ -16,7 +18,7 @@ class TypeDocumentEnum(enum.Enum):
     PA = "PA"
     NIT = "NIT"
 
-# Client model
+# Modelo para Cliente
 class Client(Base):
     __tablename__ = "clients"
 
@@ -35,7 +37,7 @@ class Client(Base):
         cascade="all, delete-orphan"
     )
 
-# Address model
+# Modelo para Direccion
 class Address(Base):
     __tablename__ = "addresses"
 

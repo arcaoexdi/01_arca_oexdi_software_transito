@@ -4,10 +4,10 @@ from enum import Enum
 from typing import Optional, List
 
 # -------------------------------
-# SCHEMAS FOR CLIENTS
+# ESQUEMAS DE CLIENTES
 # -------------------------------
 
-# Enum for type of documents (same as in models)
+# Enumeracion para tipos de documento
 class TypeDocumentEnum(str, Enum):
     CC = "CC"
     CE = "CE"
@@ -15,8 +15,9 @@ class TypeDocumentEnum(str, Enum):
     PA = "PA"
     NIT = "NIT"
 
-# Base schema for Client (common fields)
+# Esquema base para Cliente (campos comunes)
 class ClientBase(BaseModel):
+    # Campos comunes para Cliente
     type_document: TypeDocumentEnum
     number_document: str
     name: str
@@ -24,18 +25,18 @@ class ClientBase(BaseModel):
     email: EmailStr
     phone: str
 
-# Schema for creating Client
+# Esquema para crear Cliente
 class ClientCreate(ClientBase):
     pass
 
-# Schemas of Address
+# Esquemas de Direccion
 class AddressBase(BaseModel):
-    street: str
+    # Campos comunes para Direccion
     city: str
     state: str
     zip_code: str
 
-# Schema for updating Client
+# Esquema para actualizar Cliente
 class ClientUpdate(BaseModel):
     type_document: Optional[TypeDocumentEnum] = None
     number_document: Optional[str] = None
@@ -45,21 +46,29 @@ class ClientUpdate(BaseModel):
     phone: Optional[str] = None
     addresses: Optional[List[AddressBase]] = None
 
-# Output schema for Address
+# Esquema de salida para Direccion
 class AddressOut(AddressBase):
     id: int
     class Config:
         from_attributes = True
 
-# Output schema for Client including addresses
+# Esquema de salida para Cliente incluyendo direcciones
 class ClientOut(ClientBase):
+    # Campos adicionales
     id: int
+    type_document: TypeDocumentEnum
+    number_document: str
+    name: str
+    last_name: Optional[str] = None
+    email: EmailStr
+    phone: str
     datetime_created: datetime
     addresses: List[AddressOut] = []
-
+    
+    # Clase de configuracion para permitir conversion desde atributos del modelo ORM
     class Config:
         from_attributes = True
 
-# Delete schema for Id client
+# Esquema para eliminar Cliente por Id
 class ClientDelete(BaseModel):
     id: int

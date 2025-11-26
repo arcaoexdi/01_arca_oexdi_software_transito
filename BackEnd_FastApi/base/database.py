@@ -1,9 +1,13 @@
+# La documentacion se hara en español y las variables, funciones y clases se nombraran en ingles.
+# Este archivo configura la conexion a la base de datos, la sesion y la declaracion base para SQLAlchemy.
+# Tambien incluye instrucciones para manejar migraciones con Alembic.
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # -------------------------------
-# DATABASE ENGINE
+# MOTOR DE BASE DE DATOS
 # -------------------------------
 # Cambia la URL según el motor:
 # - SQLite: "sqlite:///./tramites.db"
@@ -11,18 +15,19 @@ from sqlalchemy.orm import sessionmaker
 # - MySQL: "mysql+pymysql://user:password@localhost/dbname"
 SQLALCHEMY_DATABASE_URL = "sqlite:///./tramites.db"
 
+# Crear el motor de la base de datos
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     connect_args={"check_same_thread": False}  # Necesario solo para SQLite
 )
 
 # -------------------------------
-# SESSION MANAGEMENT
+# SESION DE LA BASE DE DATOS
 # -------------------------------
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # -------------------------------
-# DECLARATIVE BASE
+# DECLARACION DE LA BASE
 # -------------------------------
 Base = declarative_base()
 
@@ -38,7 +43,7 @@ def get_db():
         db.close()
 
 # -------------------------------
-# IMPORT MODELS
+# IMPORTAR MODELOS DE LOS MÓDULOS
 # -------------------------------
 # Importar aquí asegura que Alembic y Base conozcan todos los modelos.
 import clients.models
@@ -47,11 +52,16 @@ import products.models
 import facture.models
 
 # -------------------------------
-# ALEMBIC MIGRATIONS
+# MIGRACIONES ALEMBIC
 # -------------------------------
 # Flujo de trabajo:
-# 1. alembic revision --autogenerate -m "Mensaje"
-# 2. alembic upgrade head
-# 3. alembic downgrade -1
+# 1. Revision del historial de migraciones
+# 1.1. alembic history --verbose
+# 2. Revision del estado actual de la base de datos
+# 2.1. alembic current
+# 3. Aplicar migraciones pendientes
+# 3.1. alembic upgrade head
+# 4. alembic revision --autogenerate -m "Mensaje"
+# 5. alembic downgrade -1
 #
 # Nota: target_metadata = Base.metadata en env.py
