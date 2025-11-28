@@ -21,13 +21,14 @@ class TypeDocumentEnum(enum.Enum):
 # ADDRESS SCHEMAS
 # ---------------------------------------
 
+# Clases para de direcciones asociadas a clientes
 class AddressBase(BaseModel):
     street: str
     city: str
     state: str
     zip_code: str
 
-
+# Clase para salida de direcciones asociadas a clientes
 class AddressOut(AddressBase):
     id: int
 
@@ -39,6 +40,7 @@ class AddressOut(AddressBase):
 # CLIENT SCHEMAS
 # ---------------------------------------
 
+# Clases base para clientes
 class ClientBase(BaseModel):
     type_document: TypeDocumentEnum
     number_document: str
@@ -47,11 +49,11 @@ class ClientBase(BaseModel):
     email: EmailStr
     phone: str
 
-
+# Clase para creación de clientes el cual hereda de ClientBase
 class ClientCreate(ClientBase):
     pass
 
-
+# Clase para actualización de clientes el cual hereda de ClientBase
 class ClientUpdate(BaseModel):
     type_document: Optional[TypeDocumentEnum] = None
     number_document: Optional[str] = None
@@ -62,6 +64,7 @@ class ClientUpdate(BaseModel):
     addresses: Optional[List[AddressBase]] = None
 
 
+# Clase para salida de clientes el cual hereda de ClientBase
 class ClientOut(ClientBase):
     id: int
     datetime_created: datetime
@@ -73,5 +76,7 @@ class ClientOut(ClientBase):
         from_attributes = True
 
 
+# Clase para eliminación lógica de clientes
 class ClientDelete(BaseModel):
+    is_active: bool = False
     delete_reason: Optional[str] = "Deleted manually"

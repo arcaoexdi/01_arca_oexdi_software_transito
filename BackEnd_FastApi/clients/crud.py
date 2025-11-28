@@ -89,16 +89,18 @@ def update_client(db: Session, client_id: int, updated_data: ClientUpdate) -> Op
 # ELIMINAR CLIENTE (LÓGICO)
 # ---------------------------------------
 
-def delete_client(db: Session, client_id: int, client_delete: ClientDelete) -> Optional[Client]:
-
+def delete_client(db: Session, client_id: int, client_delete: Optional[ClientDelete] = None) -> Optional[Client]:
     client = get_client(db, client_id)
     if not client:
         return None
 
+    # Soft delete
     client.is_active = False
-    client.delete_reason = client_delete.delete_reason
+
+    # Guardar razón si se envía
+    if client_delete and getattr(client_delete, "delete_reason", None):
+        client.delete_reason = client_delete.delete_reason
 
     db.commit()
     db.refresh(client)
-
     return client

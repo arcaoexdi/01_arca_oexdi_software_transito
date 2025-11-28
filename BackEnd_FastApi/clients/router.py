@@ -1,5 +1,6 @@
 # ROUTER.PY — Versión Mejorada
 
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from base.database import get_db
@@ -56,11 +57,14 @@ def update_client(client_id: int, updated_client: schemas.ClientUpdate, db: Sess
 # ---------------------------------------
 
 @router.delete("/{client_id}", response_model=schemas.ClientOut)
-def delete_client(client_id: int, delete_info: schemas.ClientDelete, db: Session = Depends(get_db)):
-
-    deleted = crud.delete_client(db=db, client_id=client_id, client_delete=delete_info)
-
+def delete_client(client_id: int, delete_info: Optional[schemas.ClientDelete] = None, db: Session = Depends(get_db)):
+    
+    deleted = crud.delete_client(
+        db=db, 
+        client_id=client_id, 
+        client_delete=delete_info)
+    
     if not deleted:
         raise HTTPException(status_code=404, detail="Client not found")
-
+    
     return deleted
