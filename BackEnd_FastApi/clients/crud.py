@@ -1,86 +1,104 @@
-# Librerias importadas para las operaciones CRUD de los clientes.
+# CRUD.PY — Versión Mejorada
 
-# Libreria sqlalchemy para la gestion de sesiones
 from sqlalchemy.orm import Session
-# Libreria del modelo de Cliente y Direccion
+from sqlalchemy import or_
 from clients.models import Client, Address
-# Libreria de los esquemas de Cliente
-from clients.schemas import ClientCreate, ClientUpdate
-# Libreria para tipos opcionales
+from clients.schemas import ClientCreate, ClientUpdate, ClientDelete
 from typing import Optional
 
-# -------------------------------
-# CRUD PARA CLIENTES
-# -------------------------------
+# ---------------------------------------
+# CREAR CLIENTE
+# ---------------------------------------
 
-# Crear un nuevo cliente
 def create_client(db: Session, client_data: ClientCreate) -> Client:
-    # Validar si el cliente ya existe por numero de documento, email o telefono
+
     existing = db.query(Client).filter(
-        (Client.number_document == client_data.number_document) |
-        (Client.email == client_data.email) |
-        (Client.phone == client_data.phone)
+        or_(
+            Client.number_document == client_data.number_document,
+            Client.email == client_data.email,
+            Client.phone == client_data.phone
+        )
     ).first()
-    # Si el cliente ya existe, se emite un aviso de error de que el cliente ya existe
+
     if existing:
         raise ValueError("Client already exists")
-    
-    # Si el cliente no existe, se crea uno nuevo
+
     new_client = Client(**client_data.dict())
-    # Se agrega el nuevo cliente a la base de datos
+
     db.add(new_client)
-    # Se confirma la transaccion
     db.commit()
-    # Se actualiza la instancia del cliente con los datos de la base de datos
     db.refresh(new_client)
-    # Se retorna el nuevo cliente creado
+
     return new_client
 
-# Obtener un cliente por ID unico
-def get_client(db: Session, client_id: int) -> Optional[Client]:
-    # Se retorna el cliente con el ID especificado
-    return db.query(Client).filter(Client.id == client_id).first()
 
-# Actualizar un cliente
+# ---------------------------------------
+# OBTENER CLIENTE
+# ---------------------------------------
+
+def get_client(db: Session, client_id: int) -> Optional[Client]:
+    return db.query(Client).filter(Client.id == client_id, Client.is_active == True).first()
+
+
+# ---------------------------------------
+# ACTUALIZAR CLIENTE
+# ---------------------------------------
+
 def update_client(db: Session, client_id: int, updated_data: ClientUpdate) -> Optional[Client]:
-    # Se obtiene el cliente por ID unico
+
     client = get_client(db, client_id)
-    # Si el cliente no existe, crear uno nuevo
     if not client:
-        # Crear un nuevo cliente con los datos actualizados
-        create = create_client(db, ClientCreate(**updated_data.dict(exclude_unset=True)))
-        # Se retorna el cliente creado
-        return create
-    # Convertir los datos actualizados a un diccionario excluyendo los valores no establecidos
+        return None
+
     update_dict = updated_data.dict(exclude_unset=True)
-    
-    # Validar duplicados si se actualizan campos únicos
+
+    # Actualizar direcciones
     if "addresses" in update_dict:
-        client.addresses = [Address(**addr) for addr in update_dict["addresses"]]
+        client.addresses = [
+            Address(client_id=client.id, **addr.dict())
+            for addr in update_dict["addresses"]
+        ]
         update_dict.pop("addresses")
 
-    # Actualizar el resto de los campos
+    # Validar duplicados al actualizar
+    if "email" in update_dict or "phone" in update_dict or "number_document" in update_dict:
+
+        duplicate = db.query(Client).filter(
+            Client.id != client.id,
+            or_(
+                Client.email == update_dict.get("email"),
+                Client.phone == update_dict.get("phone"),
+                Client.number_document == update_dict.get("number_document")
+            )
+        ).first()
+
+        if duplicate:
+            raise ValueError("Another client already has this email/phone/document.")
+
+    # Aplicar cambios
     for field, value in update_dict.items():
         setattr(client, field, value)
 
-    # Confirmar la transaccion
     db.commit()
-    # Actualizar la instancia del cliente con los datos de la base de datos
     db.refresh(client)
-    # Retornar el cliente actualizado
+
     return client
 
-# Eliminar un cliente
-def delete_client(db: Session, client_id: int) -> Optional[Client]:
-    # Obtener el cliente por ID unico
+
+# ---------------------------------------
+# ELIMINAR CLIENTE (LÓGICO)
+# ---------------------------------------
+
+def delete_client(db: Session, client_id: int, client_delete: ClientDelete) -> Optional[Client]:
+
     client = get_client(db, client_id)
-    # Si el cliente no existe, retornar None
     if not client:
-        # No se encontró el cliente
         return None
-    # Eliminar el cliente de la base de datos
-    db.delete(client)
-    # Confirmar la transaccion
+
+    client.is_active = False
+    client.delete_reason = client_delete.delete_reason
+
     db.commit()
-    # Retornar el cliente eliminado
+    db.refresh(client)
+
     return client
