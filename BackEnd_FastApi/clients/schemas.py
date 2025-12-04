@@ -48,6 +48,7 @@ class ClientBase(BaseModel):
     last_name: Optional[str] = None
     email: EmailStr
     phone: str
+    listaddress: Optional[List[AddressBase]] = None
 
 # Clase para creación de clientes el cual hereda de ClientBase
 class ClientCreate(ClientBase):
